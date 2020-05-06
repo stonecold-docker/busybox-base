@@ -16,5 +16,11 @@ FROM scratch
 
 COPY --from=builder /build/dist/dist-busybox-x64 /
 
+#RUN ["docker-build-start"]
+
+RUN ["docker-perm"]
+
+#RUN ["docker-build-end"]
+
 ENTRYPOINT ["docker-run"]
 
