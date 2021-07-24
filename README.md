@@ -1,6 +1,6 @@
 # busybox-base
-![Docker Pulls](https://img.shields.io/docker/pulls/forumi0721/busybox-x64-base)
-![Docker Stars](https://img.shields.io/docker/stars/forumi0721/busybox-x64-base)
+![Docker Pulls](https://img.shields.io/docker/pulls/forumi0721/busybox-base)
+![Docker Stars](https://img.shields.io/docker/stars/forumi0721/busybox-base)
 
 
 
