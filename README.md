@@ -6,8 +6,8 @@
 
 ----------------------------------------
 ### x64
-![Docker Image Version](https://img.shields.io/docker/v/forumi0721/busybox-base/latest)
-![Docker Image Size (tag)](https://img.shields.io/docker/image-size/forumi0721/busybox-base/latest)
+![Docker Image Version](https://img.shields.io/docker/v/forumi0721/busybox-base/x64)
+![Docker Image Size (tag)](https://img.shields.io/docker/image-size/forumi0721/busybox-base/x64)
 ### aarch64
 ![Docker Image Version](https://img.shields.io/docker/v/forumi0721/busybox-base/aarch64)
 ![Docker Image Size (tag)](https://img.shields.io/docker/image-size/forumi0721/busybox-base/aarch64)
