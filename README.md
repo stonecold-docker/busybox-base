@@ -7,18 +7,21 @@
 ----------------------------------------
 ### x64
 ![Docker Image Version](https://img.shields.io/docker/v/forumi0721/busybox-base/latest)
-![Docker Image Size](https://img.shields.io/docker/image-size/forumi0721/busybox-base/latest)
+![Docker Image Size (tag)](https://img.shields.io/docker/image-size/forumi0721/busybox-base/latest)
 ### aarch64
 ![Docker Image Version](https://img.shields.io/docker/v/forumi0721/busybox-base/aarch64)
-![Docker Image Size](https://img.shields.io/docker/image-size/forumi0721/busybox-base/aarch64)
+![Docker Image Size (tag)](https://img.shields.io/docker/image-size/forumi0721/busybox-base/aarch64)
+### armv7
+![Docker Image Version](https://img.shields.io/docker/v/forumi0721/busybox-base/armv7)
+![Docker Image Size (tag)](https://img.shields.io/docker/image-size/forumi0721/busybox-base/armv7)
 
 
 
 ----------------------------------------
 #### Description
 
-* Distribution : [Busybox](https://busybox.net/)
-* Architecture : x64,aarch64
+* Distribution : [Entware](https://github.com/Entware/Entware/)
+* Architecture : x64,aarch64,armv7
 * Appplication : -
 
 
@@ -39,13 +42,7 @@ docker run -i -t --rm \
 ```dockerfile
 FROM forumi0721/busybox-base:[ARCH_TAG]
 
-#For cross compile on dockerhub (aarch64)
-RUN ["docker-build-start"]
-
 RUN 'build-code'
-
-#For cross compile on dockerhub  (aarch64)
-RUN ["docker-build-end"]
 ```
 
 
