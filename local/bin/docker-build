@@ -4,38 +4,91 @@ set -e
 
 echo "[$(TZ="GMT-9" date '+%Y-%m-%d %H:%M:%S')] ==> Installing packages"
 PKG_LIB=""
-PKG_DEV="bash git grep"
+PKG_DEV="bash git grep busybox-static"
 docker-install -r -u ${PKG_LIB} ${PKG_DEV}
-echo "[$(TZ="GMT-9" date '+%Y-%m-%d %H:%M:%S')] ==> OK"
-echo
-
-echo "[$(TZ="GMT-9" date '+%Y-%m-%d %H:%M:%S')] ==> Downloading bootstrap"
-mkdir -p /build
-cd /build
-wget --no-check-certificate -q https://bitbucket.org/forumi0721/docker-dist-files/raw/master/imagex.sh
-chmod +x imagex.sh
-git clone https://forumi0721@bitbucket.org/forumi0721/docker-dist-extras.git extras --depth=1
-if [ "$(uname -m)" = "x86_64" -a "${BUILD_TAG}" = "aarch64" ]; then
-	cp extras/qemu-aarch64-static /usr/bin
-	chmod +x /usr/bin/qemu-aarch64-static
-elif [ "$(uname -m)" = "x86_64" -a "${BUILD_TAG}" = "armv7" ]; then
-	cp extras/qemu-arm-static /usr/bin
-	chmod +x /usr/bin/qemu-arm-static
-fi
-cd /
+apk info -L busybox-static
 echo "[$(TZ="GMT-9" date '+%Y-%m-%d %H:%M:%S')] ==> OK"
 echo
 
 echo "[$(TZ="GMT-9" date '+%Y-%m-%d %H:%M:%S')] ==> Executing bootstrap"
-cd /build
-./imagex.sh -d busybox -a ${BUILD_TAG:-x64} -q
-cd /
+chroot_cmd() {
+	PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin LANG=C LC_ALL=C chroot "${TARGET_OUTPUT}" "${@}"
+}
+TARGET_TIMEZONE=Asia/Seoul
+TARGET_OUTPUT=/output
+
+#basic structure
+rm -rf ${TARGET_OUTPUT}
+mkdir -p ${TARGET_OUTPUT}
+for x in bin dev etc home lib opt proc root run sbin sys tmp var usr
+do
+	mkdir -p ${TARGET_OUTPUT}/${x}
+done
+chmod 1777 ${TARGET_OUTPUT}/tmp
+for x in bin lib local sbin share
+do
+	mkdir -p ${TARGET_OUTPUT}/usr/${x}
+done
+for x in bin lib sbin share
+do
+	mkdir -p ${TARGET_OUTPUT}/usr/local/${x}
+done
+for x in log
+do
+	mkdir -p ${TARGET_OUTPUT}/var/${x}
+done
+
+#busybox
+mkdir -p ${TARGET_OUTPUT}/bin
+cp /bin/busybox.static ${TARGET_OUTPUT}/bin/
+
+#resolve
+cat <<- EOF > ${TARGET_OUTPUT}/etc/resolv.conf
+nameserver 1.1.1.1
+nameserver 1.0.0.1
+EOF
+
+cat <<- EOF > ${TARGET_OUTPUT}/etc/passwd
+root:x:0:0:Root:/root:/bin/sh
+nobody:x:65534:65534:nobody:/:/sbin/nologin
+EOF
+cat <<- EOF > ${TARGET_OUTPUT}/etc/group
+root:x:0:root
+users:x:100:
+nobody:x:65534:
+EOF
+cat <<- EOF >> ${TARGET_OUTPUT}/etc/os-release
+NAME=busybox
+ID=busybox
+EOF
+cat <<- 'EOF' >> ${TARGET_OUTPUT}/etc/profile
+export CHARSET=UTF-8
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+export PAGER=less
+export PS1='\h:\w\$ '
+umask 022
+
+for script in /etc/profile.d/*.sh ; do
+	if [ -r $script ] ; then
+		. $script
+	fi
+done
+EOF
+chmod 755 ${TARGET_OUTPUT}/etc/profile
+mkdir -p ${TARGET_OUTPUT}/etc/profile.d
+
+#timezone
+if [ -e ${TARGET_OUTPUT}/usr/share/zoneinfo/${TARGET_TIMEZONE} ]; then
+	ln -s /usr/share/zoneinfo/${TARGET_TIMEZONE} ${TARGET_OUTPUT}/etc/localtime
+elif [ -e /usr/share/zoneinfo/${TARGET_TIMEZONE} ]; then
+	cat /usr/share/zoneinfo/${TARGET_TIMEZONE} > ${TARGET_OUTPUT}/etc/localtime
+elif [ -e /etc/zoneinfo/${TARGET_TIMEZONE} ]; then
+	cat /etc/zoneinfo/${TARGET_TIMEZONE} > ${TARGET_OUTPUT}/etc/localtime
+fi
+
+chroot_cmd /bin/busybox.static sh -c "/bin/busybox.static --install -s ; /bin/busybox.static add-shell /bin/sh"
+
+ln -s busybox.static ${TARGET_OUTPUT}/bin/busybox
 echo "[$(TZ="GMT-9" date '+%Y-%m-%d %H:%M:%S')] ==> OK"
 echo
-
-echo "[$(TZ="GMT-9" date '+%Y-%m-%d %H:%M:%S')] ==> Moving output"
-cd /
-mv /build/dist/dist-* /output
-rm -rf /build
-echo "[$(TZ="GMT-9" date '+%Y-%m-%d %H:%M:%S')] ==> OK"
 
