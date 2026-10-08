@@ -4,7 +4,7 @@ set -e
 
 echo "[$(TZ="GMT-9" date '+%Y-%m-%d %H:%M:%S')] ==> Installing required packages"
 PKG_LIB=""
-PKG_DEV="bash git grep busybox-static tzdata"
+PKG_DEV="busybox-static tzdata"
 docker-install -r -u ${PKG_LIB} ${PKG_DEV}
 echo "[$(TZ="GMT-9" date '+%Y-%m-%d %H:%M:%S')] ==> OK"
 echo
@@ -24,11 +24,10 @@ done
 chmod 1777 ${TARGET_OUTPUT}/tmp
 
 #busybox
-cp /bin/busybox.static ${TARGET_OUTPUT}/bin/
-ln -s busybox.static ${TARGET_OUTPUT}/bin/busybox
+cp /bin/busybox.static ${TARGET_OUTPUT}/bin/busybox
 for applet in $(busybox --list-full)
 do
-	ln -s /bin/busybox.static ${TARGET_OUTPUT}/${applet}
+	ln -sf /bin/busybox ${TARGET_OUTPUT}/${applet}
 done
 
 #resolve
