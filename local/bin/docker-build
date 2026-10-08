@@ -17,26 +17,13 @@ TARGET_TIMEZONE="Asia/Seoul"
 #basic
 rm -rf ${TARGET_OUTPUT}
 mkdir -p ${TARGET_OUTPUT}
-for x in bin dev etc home lib opt proc root run sbin sys tmp var usr
+for x in bin dev etc home lib opt proc root run sbin sys tmp usr/bin usr/lib usr/sbin usr/share usr/local/bin usr/local/lib usr/local/sbin usr/local/share var/log
 do
 	mkdir -p ${TARGET_OUTPUT}/${x}
 done
 chmod 1777 ${TARGET_OUTPUT}/tmp
-for x in bin lib local sbin share
-do
-	mkdir -p ${TARGET_OUTPUT}/usr/${x}
-done
-for x in bin lib sbin share
-do
-	mkdir -p ${TARGET_OUTPUT}/usr/local/${x}
-done
-for x in log
-do
-	mkdir -p ${TARGET_OUTPUT}/var/${x}
-done
 
 #busybox
-mkdir -p ${TARGET_OUTPUT}/bin
 cp /bin/busybox.static ${TARGET_OUTPUT}/bin/
 ln -s busybox.static ${TARGET_OUTPUT}/bin/busybox
 for applet in $(busybox --list-full)
