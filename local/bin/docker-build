@@ -4,18 +4,15 @@ set -e
 
 echo "[$(TZ="GMT-9" date '+%Y-%m-%d %H:%M:%S')] ==> Installing packages"
 PKG_LIB=""
-PKG_DEV="bash git grep busybox-static"
+PKG_DEV="bash git grep busybox-static tzdata"
 docker-install -r -u ${PKG_LIB} ${PKG_DEV}
-apk info -L busybox-static
 echo "[$(TZ="GMT-9" date '+%Y-%m-%d %H:%M:%S')] ==> OK"
 echo
 
 echo "[$(TZ="GMT-9" date '+%Y-%m-%d %H:%M:%S')] ==> Executing bootstrap"
-chroot_cmd() {
-	PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin LANG=C LC_ALL=C chroot "${TARGET_OUTPUT}" "${@}"
-}
-TARGET_TIMEZONE=Asia/Seoul
+#config
 TARGET_OUTPUT=/output
+TARGET_TIMEZONE="Asia/Seoul"
 
 #basic structure
 rm -rf ${TARGET_OUTPUT}
@@ -41,6 +38,12 @@ done
 #busybox
 mkdir -p ${TARGET_OUTPUT}/bin
 cp /bin/busybox.static ${TARGET_OUTPUT}/bin/
+ln -s busybox.static ${TARGET_OUTPUT}/bin/busybox
+#PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin LANG=C LC_ALL=C chroot "${TARGET_OUTPUT}" /bin/busybox sh -c "/bin/busybox --install -s ; /bin/busybox add-shell /bin/sh"
+for applet in $(busybox --list-full)
+do
+	ln -s /bin/busybox.static ${TARGET_OUTPUT}/${applet}
+done
 
 #resolve
 cat <<- EOF > ${TARGET_OUTPUT}/etc/resolv.conf
@@ -79,16 +82,15 @@ mkdir -p ${TARGET_OUTPUT}/etc/profile.d
 
 #timezone
 if [ -e ${TARGET_OUTPUT}/usr/share/zoneinfo/${TARGET_TIMEZONE} ]; then
-	ln -s /usr/share/zoneinfo/${TARGET_TIMEZONE} ${TARGET_OUTPUT}/etc/localtime
+	echo "${TARGET_TIMEZONE}" > ${TARGET_OUTPUT}/etc/timezone
+	rm -rf ${TARGET_OUTPUT}/etc/localtime
+	ln -sf /usr/share/zoneinfo/${TARGET_TIMEZONE} ${TARGET_OUTPUT}/etc/localtime
 elif [ -e /usr/share/zoneinfo/${TARGET_TIMEZONE} ]; then
-	cat /usr/share/zoneinfo/${TARGET_TIMEZONE} > ${TARGET_OUTPUT}/etc/localtime
-elif [ -e /etc/zoneinfo/${TARGET_TIMEZONE} ]; then
-	cat /etc/zoneinfo/${TARGET_TIMEZONE} > ${TARGET_OUTPUT}/etc/localtime
+	echo "${TARGET_TIMEZONE}" > ${TARGET_OUTPUT}/etc/timezone
+	rm -rf ${TARGET_OUTPUT}/etc/localtime
+	cp /usr/share/zoneinfo/${TARGET_TIMEZONE} ${TARGET_OUTPUT}/etc/localtime
 fi
 
-chroot_cmd /bin/busybox.static sh -c "/bin/busybox.static --install -s ; /bin/busybox.static add-shell /bin/sh"
-
-ln -s busybox.static ${TARGET_OUTPUT}/bin/busybox
 echo "[$(TZ="GMT-9" date '+%Y-%m-%d %H:%M:%S')] ==> OK"
 echo
 

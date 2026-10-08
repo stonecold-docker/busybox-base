@@ -5,20 +5,19 @@
 
 
 ----------------------------------------
-### x64
-![Docker Image Size (tag)](https://img.shields.io/docker/image-size/forumi0721/busybox-base/x64)
-### aarch64
-![Docker Image Size (tag)](https://img.shields.io/docker/image-size/forumi0721/busybox-base/aarch64)
-### armv7
-![Docker Image Size (tag)](https://img.shields.io/docker/image-size/forumi0721/busybox-base/armv7)
+### amd64
+![Docker Image Size (tag)](https://img.shields.io/docker/image-size/forumi0721/busybox-base/latest?arch=amd64)
+
+### arm64
+![Docker Image Size (tag)](https://img.shields.io/docker/image-size/forumi0721/busybox-base/latest?arch=arm64)
 
 
 
 ----------------------------------------
 #### Description
 
-* Distribution : [Entware](https://github.com/Entware/Entware/)
-* Architecture : x64,aarch64,armv7
+* Distribution : [busybox](https://busybox.net/)
+* Architecture : amd64,arm64
 * Appplication : -
 
 
@@ -28,7 +27,7 @@
 
 ```sh
 docker run -i -t --rm \
-           forumi0721/busybox-base:[ARCH_TAG]
+           forumi0721/busybox-base
 ```
 
 
