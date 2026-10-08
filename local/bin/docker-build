@@ -2,7 +2,7 @@
 
 set -e
 
-echo "[$(TZ="GMT-9" date '+%Y-%m-%d %H:%M:%S')] ==> Installing packages"
+echo "[$(TZ="GMT-9" date '+%Y-%m-%d %H:%M:%S')] ==> Installing required packages"
 PKG_LIB=""
 PKG_DEV="bash git grep busybox-static tzdata"
 docker-install -r -u ${PKG_LIB} ${PKG_DEV}
