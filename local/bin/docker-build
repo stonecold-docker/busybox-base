@@ -14,7 +14,7 @@ echo "[$(TZ="GMT-9" date '+%Y-%m-%d %H:%M:%S')] ==> Executing bootstrap"
 TARGET_OUTPUT=/output
 TARGET_TIMEZONE="Asia/Seoul"
 
-#basic structure
+#basic
 rm -rf ${TARGET_OUTPUT}
 mkdir -p ${TARGET_OUTPUT}
 for x in bin dev etc home lib opt proc root run sbin sys tmp var usr
@@ -39,7 +39,6 @@ done
 mkdir -p ${TARGET_OUTPUT}/bin
 cp /bin/busybox.static ${TARGET_OUTPUT}/bin/
 ln -s busybox.static ${TARGET_OUTPUT}/bin/busybox
-#PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin LANG=C LC_ALL=C chroot "${TARGET_OUTPUT}" /bin/busybox sh -c "/bin/busybox --install -s ; /bin/busybox add-shell /bin/sh"
 for applet in $(busybox --list-full)
 do
 	ln -s /bin/busybox.static ${TARGET_OUTPUT}/${applet}
@@ -51,6 +50,7 @@ nameserver 1.1.1.1
 nameserver 1.0.0.1
 EOF
 
+#etc
 cat <<- EOF > ${TARGET_OUTPUT}/etc/passwd
 root:x:0:0:Root:/root:/bin/sh
 nobody:x:65534:65534:nobody:/:/sbin/nologin
