@@ -7,6 +7,6 @@ if [ -e multiarch-manifest.yaml ]; then
 
 	chmod +x manifest-tool-linux-amd64
 
-	./manifest-tool-linux-amd64-tool push from-spec multiarch-manifest.yaml
+	./manifest-tool-linux-amd64 push from-spec multiarch-manifest.yaml
 fi
 
