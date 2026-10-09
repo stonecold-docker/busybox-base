@@ -154,7 +154,7 @@ jobs:
           context: ${{ steps.paths.outputs.build_path }}
           file: ${{ steps.paths.outputs.dockerfile_path }}
           platforms: ${{ matrix.platform }}
-          outputs: type=image,name=${{ env.DOCKER_REPOSITORY_NAME }},push-by-digest=true,name-canonical=true,push=${{ github.event_name != 'pull_request' }}
+          outputs: type=image,name=${{ env.DOCKER_REPOSITORY_NAME }},push-by-digest=true,name-canonical=true,push=${{ github.event_name != 'pull_request' }},oci-mediatypes=false
           provenance: false
           sbom: false
           cache-from: type=gha,scope=${{ matrix.tag }}
