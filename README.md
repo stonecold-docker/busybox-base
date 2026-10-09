@@ -7,7 +7,6 @@
 ----------------------------------------
 ### amd64
 ![Docker Image Size (tag)](https://img.shields.io/docker/image-size/forumi0721/busybox-base/latest?arch=amd64)
-
 ### arm64
 ![Docker Image Size (tag)](https://img.shields.io/docker/image-size/forumi0721/busybox-base/latest?arch=arm64)
 
@@ -16,9 +15,9 @@
 ----------------------------------------
 #### Description
 
-* Distribution : [busybox](https://busybox.net/)
-* Architecture : amd64,arm64
-* Appplication : -
+* Distribution : [BusyBox](https://busybox.net/)
+* Architecture : amd64, arm64
+* Application : -
 
 
 
@@ -27,7 +26,7 @@
 
 ```sh
 docker run -i -t --rm \
-           forumi0721/busybox-base
+           forumi0721/busybox-base:latest
 ```
 
 
@@ -36,7 +35,7 @@ docker run -i -t --rm \
 #### Usage
 
 ```dockerfile
-FROM forumi0721/busybox-base:[ARCH_TAG]
+FROM forumi0721/busybox-base:latest
 
 RUN 'build-code'
 ```
